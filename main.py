@@ -57,7 +57,6 @@ def ask_info():
                 end_date = start_date + datetime.timedelta(days=time)
                 daterange = pd.date_range(start_date, end_date)
                 for single_date in daterange:
-                    print(single_date.strftime("%Y-%m-%dT%H:%M:%S"))
                     start_date = single_date
                     end_date = single_date + datetime.timedelta(hours=7)
         except ValueError:
