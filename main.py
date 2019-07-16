@@ -8,7 +8,7 @@ import radar
 import uuid
 
 def main():
-    b = Bridge('192.168.1.113')
+    b = Bridge('bridge_ip')
     b.connect()
     lights = [l.name for l in b.lights]
     print(lights)
