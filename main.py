@@ -18,8 +18,8 @@ def main():
     b.connect()
     lights = [l.name for l in b.lights]
     print(lights)
-    start_date, end_date, name, rules = ask_info()
-    bulbs = [random.randint(1, 4) for i in range(rules)]
+    start_date, end_date, name, routines = ask_info()
+    bulbs = [random.randint(1, len(lights)) for i in range(routines)]
     sol = [randomize(b, lights, start_date, end_date, name, x) for x in bulbs]
     pprint(sol)
     create_file(sol)
@@ -40,7 +40,7 @@ def ask_info():
         items = text_num_split(tvars)
         time = int(items[1])
         if items[0] in delta_opts:
-            rules = int(input("cuantas rutinas quieres generar? "))
+            routines = int(input("cuantas rutinas quieres generar? "))
             interval = items[0]
         else:
             raise ValueError
@@ -62,7 +62,7 @@ def ask_info():
         except ValueError:
             print("error. formato de fecha incorrecto.\n")
     return start_date.strftime("%Y-%m-%dT%H:%M:%S"), end_date.strftime("%Y-%m-%dT%H:%M:%S"), \
-    name+uuid.uuid4().hex.upper()[0:4], rules
+    name+uuid.uuid4().hex.upper()[0:4], routines
 
 def randomize(bridge, lights, start_date, end_date, name, bulb):
     """
@@ -71,11 +71,11 @@ def randomize(bridge, lights, start_date, end_date, name, bulb):
     :param lights: list of lights available on the bridge
     :param start_date: date range to start generating random ones
     :param end_date: date range end, adds number of days to start_date
-    :param name: vacations name to identify generated rules on android app
+    :param name: vacations name to identify generated routines on android app
     :param name: bulb id to randomize from the ones available in lights
     """
-    on = {'on': True}
-    off = {'on': False}
+    on = {'on': True, 'hue': 41442}
+    off = {'on': False, 'hue': 41442}
     start = radar.random_datetime(start=start_date, stop=end_date)
     start_str = start.strftime("%Y-%m-%dT%H:%M:%S")
     end = (start + datetime.timedelta(minutes=random.randint(1, 50))).replace(microsecond=0)
