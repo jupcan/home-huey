@@ -1,23 +1,28 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-from phue import Bridge
 from pprint import pprint
 import random
 import datetime
-import radar
 import uuid
+from phue import Bridge
+import radar
+
 
 def main():
+    """
+    creates bridge instance and executes algorithm
+    """
     b = Bridge('bridge_ip')
     b.connect()
     lights = [l.name for l in b.lights]
     print(lights)
-    start_date, end_date, name, rules = askInfo()
-    bulbs = [random.randint(1,4) for i in range(rules)]
+    start_date, end_date, name, rules = ask_info()
+    bulbs = [random.randint(1, 4) for i in range(rules)]
     sol = [randomize(b, lights, start_date, end_date, name, x) for x in bulbs]
-    pprint(sol); createFile(sol)
+    pprint(sol)
+    create_file(sol)
 
-def askInfo():
+def ask_info():
     """
     :return: all user inputs needed to run the program
     :raises exception: not entering a valid input
@@ -32,9 +37,10 @@ def askInfo():
             start_date = datetime.datetime.strptime(usr_input, "%Y-%m-%d %H:%M:%S")
             end_date = start_date + datetime.timedelta(days=usr_days)
             valid = True
-        except:
+        except ValueError:
             print("error. formato de fecha incorrecto.\n")
-    return start_date.strftime("%Y-%m-%dT%H:%M:%S"), end_date.strftime("%Y-%m-%dT%H:%M:%S"), name+uuid.uuid4().hex.upper()[0:4], rules
+    return start_date.strftime("%Y-%m-%dT%H:%M:%S"), end_date.strftime("%Y-%m-%dT%H:%M:%S"), \
+    name+uuid.uuid4().hex.upper()[0:4], rules
 
 def randomize(bridge, lights, start_date, end_date, name, bulb):
     """
@@ -46,22 +52,24 @@ def randomize(bridge, lights, start_date, end_date, name, bulb):
     :param name: vacations name to identify generated rules on android app
     :param name: bulb id to randomize from the ones available in lights
     """
-    on = {'on': True}; off = {'on': False}
+    on = {'on': True}
+    off = {'on': False}
     start = radar.random_datetime(start=start_date, stop=end_date)
-    start_str=start.strftime("%Y-%m-%dT%H:%M:%S")
-    end = (start + datetime.timedelta(minutes=random.randint(1,60))).replace(microsecond=0)
-    end_str=end.strftime("%Y-%m-%dT%H:%M:%S")
+    start_str = start.strftime("%Y-%m-%dT%H:%M:%S")
+    end = (start + datetime.timedelta(minutes=random.randint(1, 60))).replace(microsecond=0)
+    end_str = end.strftime("%Y-%m-%dT%H:%M:%S")
 
-    bridge.create_schedule(name, start_str, bulb, on); bridge.create_schedule(name, end_str, bulb, off)
+    bridge.create_schedule(name, start_str, bulb, on)
+    bridge.create_schedule(name, end_str, bulb, off)
     return lights[bulb-1], start_str, end_str, str(end-start)
 
-def createFile(sol):
+def create_file(sol):
     """
     creates txt file with the solution
     :param sol: random home solution automatization
     """
-    txt = open('out.txt','w')
-    if(sol is not None):
+    txt = open('out.txt', 'w')
+    if sol is not None:
         txt.write("\n".join(str(item) for item in sol))
     else:
         print('no solution found')
