@@ -5,6 +5,7 @@ import random
 import datetime
 import uuid
 import re
+import pandas as pd
 from phue import Bridge
 import radar
 
@@ -31,11 +32,11 @@ def ask_info():
     valid = False
     delta_opts = {'d' : 'days','dia' : 'days', 'dias' : 'days', 'día' : 'days', 'días' : 'days' \
     , 'h' : 'hours', 'hora' : 'hours', 'horas' : 'hours', 'm' : 'minutes', \
-    'minuto' : 'minutes', 'minutos' : 'minutes'}
+    'minuto' : 'minutes', 'minutos' : 'minutes', 'es' : 'especial'}
     while not valid:
         name = input("introduce un nombre de vacaciones: ")
         date = input("introduce una fecha de inicio(yyyy-mm-dd hh:mm:ss): ")
-        tvars = input("que intervalo y cantidad de tiempo quieres(d1-h5-m30)? ")
+        tvars = input("que intervalo y cantidad de tiempo quieres(d1-h5-m30-es7)? ")
         items = text_num_split(tvars)
         time = int(items[1])
         if items[0] in delta_opts:
@@ -50,8 +51,15 @@ def ask_info():
                 end_date = start_date + datetime.timedelta(days=time)
             elif delta_opts[interval] == 'hours':
                 end_date = start_date + datetime.timedelta(hours=time)
-            else:
+            elif delta_opts[interval] == 'minutes':
                 end_date = start_date + datetime.timedelta(minutes=time)
+            else:
+                end_date = start_date + datetime.timedelta(days=time)
+                daterange = pd.date_range(start_date, end_date)
+                for single_date in daterange:
+                    print(single_date.strftime("%Y-%m-%dT%H:%M:%S"))
+                    start_date = single_date
+                    end_date = single_date + datetime.timedelta(hours=7)
         except ValueError:
             print("error. formato de fecha incorrecto.\n")
     return start_date.strftime("%Y-%m-%dT%H:%M:%S"), end_date.strftime("%Y-%m-%dT%H:%M:%S"), \
@@ -71,7 +79,7 @@ def randomize(bridge, lights, start_date, end_date, name, bulb):
     off = {'on': False}
     start = radar.random_datetime(start=start_date, stop=end_date)
     start_str = start.strftime("%Y-%m-%dT%H:%M:%S")
-    end = (start + datetime.timedelta(minutes=random.randint(1, 60))).replace(microsecond=0)
+    end = (start + datetime.timedelta(minutes=random.randint(1, 50))).replace(microsecond=0)
     end_str = end.strftime("%Y-%m-%dT%H:%M:%S")
 
     bridge.create_schedule(name, start_str, bulb, on)
