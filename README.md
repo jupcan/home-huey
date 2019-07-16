@@ -1,9 +1,9 @@
 # home-huey
-[![uclm](https://img.shields.io/badge/personal-project-red.svg?&longCache=true&colorA=27a79a&colorB=555555&style=for-the-badge)](http://www.juanperea.me) 
-mimic home presence with philips hue lights using ![phue](https://github.com/studioimaginaire/phue) python library
+[![uclm](https://img.shields.io/badge/personal-project-red.svg?&longCache=true&colorA=27a79a&colorB=555555&style=for-the-badge)](http://www.juanperea.me)  
+mimic home presence with philips hue lights using [phue](https://github.com/studioimaginaire/phue) python library
 
 below a command line output and solution file generation examples:
-```python
+```txt
 ['salon', 'habjuan', 'distribuidor', 'estudio']
 introduce un nombre de vacaciones: verano
 introduce una fecha de inicio(yyyy-mm-dd hh:mm:ss): 2019-07-16 02:25:00
