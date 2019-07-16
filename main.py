@@ -4,6 +4,7 @@ from pprint import pprint
 import random
 import datetime
 import uuid
+import re
 from phue import Bridge
 import radar
 
@@ -28,15 +29,29 @@ def ask_info():
     :raises exception: not entering a valid input
     """
     valid = False
+    delta_opts = {'d' : 'days','dia' : 'days', 'dias' : 'days', 'día' : 'days', 'días' : 'days' \
+    , 'h' : 'hours', 'hora' : 'hours', 'horas' : 'hours', 'm' : 'minutes', \
+    'minuto' : 'minutes', 'minutos' : 'minutes'}
     while not valid:
         name = input("introduce un nombre de vacaciones: ")
-        usr_input = input("introduce una fecha de inicio(yyyy-mm-dd hh:mm:ss): ")
-        usr_days = int(input("durante cuantos dias estaras fuera de casa? "))
-        rules = int(input("cuantas reglas quieres generar? "))
+        date = input("introduce una fecha de inicio(yyyy-mm-dd hh:mm:ss): ")
+        tvars = input("que intervalo y cantidad de tiempo quieres(d1-h5-m30)? ")
+        items = text_num_split(tvars)
+        time = int(items[1])
+        if items[0] in delta_opts:
+            rules = int(input("cuantas rutinas quieres generar? "))
+            interval = items[0]
+        else:
+            raise ValueError
         try:
-            start_date = datetime.datetime.strptime(usr_input, "%Y-%m-%d %H:%M:%S")
-            end_date = start_date + datetime.timedelta(days=usr_days)
+            start_date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
             valid = True
+            if delta_opts[interval] == 'days':
+                end_date = start_date + datetime.timedelta(days=time)
+            elif delta_opts[interval] == 'hours':
+                end_date = start_date + datetime.timedelta(hours=time)
+            else:
+                end_date = start_date + datetime.timedelta(minutes=time)
         except ValueError:
             print("error. formato de fecha incorrecto.\n")
     return start_date.strftime("%Y-%m-%dT%H:%M:%S"), end_date.strftime("%Y-%m-%dT%H:%M:%S"), \
@@ -75,6 +90,16 @@ def create_file(sol):
         print('no solution found')
         txt.write('no solution found')
     txt.close()
+
+def text_num_split(item):
+    """
+    divides a string into char and digits
+    :param item: what we want to divide
+    :return: list of elements divided
+    """
+    for i, letter in enumerate(item, 0):
+        if letter.isdigit():
+            return [item[:i],item[i:]]
 
 if __name__ == '__main__':
     main()
