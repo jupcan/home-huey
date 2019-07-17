@@ -49,16 +49,15 @@ def ask_info():
             valid = True
             if delta_opts[interval] == 'days':
                 end_date = start_date + datetime.timedelta(days=time)
-            elif delta_opts[interval] == 'hours':
-                end_date = start_date + datetime.timedelta(hours=time)
-            elif delta_opts[interval] == 'minutes':
-                end_date = start_date + datetime.timedelta(minutes=time)
-            else:
-                end_date = start_date + datetime.timedelta(days=time)
                 daterange = pd.date_range(start_date, end_date)
                 for single_date in daterange:
                     start_date = single_date
                     end_date = single_date + datetime.timedelta(hours=7)
+            elif delta_opts[interval] == 'hours':
+                end_date = start_date + datetime.timedelta(hours=time)
+            else:
+                end_date = start_date + datetime.timedelta(minutes=time)
+
         except ValueError:
             print("error. formato de fecha incorrecto.\n")
     return start_date.strftime("%Y-%m-%dT%H:%M:%S"), end_date.strftime("%Y-%m-%dT%H:%M:%S"), \
@@ -74,8 +73,8 @@ def randomize(bridge, lights, start_date, end_date, name, bulb):
     :param name: vacations name to identify generated routines on android app
     :param name: bulb id to randomize from the ones available in lights
     """
-    on = {'on': True, 'hue': 41442}
-    off = {'on': False, 'hue': 41442}
+    on = {'on': True}
+    off = {'on': False}
     start = radar.random_datetime(start=start_date, stop=end_date)
     start_str = start.strftime("%Y-%m-%dT%H:%M:%S")
     end = (start + datetime.timedelta(minutes=random.randint(1, 50))).replace(microsecond=0)
