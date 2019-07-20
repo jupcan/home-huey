@@ -5,6 +5,7 @@ import random
 import datetime
 import uuid
 import re
+import requests
 import pandas as pd
 from phue import Bridge
 import radar
@@ -14,7 +15,9 @@ def main():
     """
     creates bridge instance and executes algorithm
     """
-    b = Bridge('bridge_ip')
+    url = requests.get('https://www.meethue.com/api/nupnp')
+    ip = url.json()[0]
+    b = Bridge(ip['internalipaddress'])
     b.connect()
     lights = [l.name for l in b.lights]
     print(lights)
