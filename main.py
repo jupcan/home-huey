@@ -39,7 +39,7 @@ def ask_info():
     while not valid:
         name = input("introduce un nombre de vacaciones: ")
         date = input("introduce una fecha de inicio(yyyy-mm-dd hh:mm:ss): ")
-        tvars = input("que intervalo y cantidad de tiempo quieres(d1-h5-m30-es7)? ")
+        tvars = input("que intervalo y cantidad de tiempo quieres(d1-h5-m30)? ")
         items = text_num_split(tvars)
         time = int(items[1])
         if items[0] in delta_opts:
